@@ -113,6 +113,7 @@ class hd_tx_am_hackrf(gr.top_block):
         ##################################################
         self.msg_connect((self.network_socket_pdu_0_0, 'pdus'), (self.nrsc5_sis_encoder_0, 'command'))
         self.msg_connect((self.network_socket_pdu_1, 'pdus'), (self.nrsc5_psd_encoder_0, 'set_meta'))
+        self.msg_connect((self.nrsc5_l1_am_encoder_ma1_0, 'clock'), (self.nrsc5_l2_encoder_1, 'clock'))
         self.msg_connect((self.nrsc5_l1_am_encoder_ma1_0, 'clock'), (self.nrsc5_psd_encoder_0, 'clock'))
         self.msg_connect((self.nrsc5_l1_am_encoder_ma1_0, 'clock'), (self.nrsc5_sis_encoder_0, 'clock'))
         self.msg_connect((self.nrsc5_l2_encoder_0, 'ready'), (self.nrsc5_sis_encoder_0, 'ready'))

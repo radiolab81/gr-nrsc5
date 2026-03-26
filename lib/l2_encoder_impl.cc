@@ -78,6 +78,7 @@ l2_encoder_impl::l2_encoder_impl(const int num_progs,
     total_data_width = (this->data_bytes > 0) ? (this->data_bytes + ccc_width + 1) : 0;
     aas_current_port = -1;
     aas_block_offset = 0;
+    frames_allowed = (num_progs == 0) ? 1 : INT_MAX;
 
     switch (size) {
     case 146176:
@@ -103,6 +104,10 @@ l2_encoder_impl::l2_encoder_impl(const int num_progs,
         codec_mode = 13;
         break;
     }
+
+    message_port_register_in(pmt::intern("clock"));
+    set_msg_handler(pmt::intern("clock"),
+                    [this](pmt::pmt_t msg) { this->handle_clock(msg); });
 }
 
 /*
@@ -134,7 +139,9 @@ int l2_encoder_impl::general_work(int noutput_items,
     int hdc_off[MAX_PROGRAMS] = { 0 };
     int psd_off[MAX_PROGRAMS] = { 0 };
 
-    for (int out_off = 0; out_off < noutput_items * size; out_off += size) {
+    int noutput_items_reduced = std::min(noutput_items, frames_allowed);
+
+    for (int out_off = 0; out_off < noutput_items_reduced * size; out_off += size) {
         memset(out_buf, 0, payload_bytes);
 
         unsigned char* out_program = out_buf;
@@ -349,7 +356,10 @@ int l2_encoder_impl::general_work(int noutput_items,
         consume(p, hdc_off[p]);
         consume(num_progs + p, psd_off[p]);
     }
-    return noutput_items;
+    if (num_progs == 0) {
+        frames_allowed -= noutput_items_reduced;
+    }
+    return noutput_items_reduced;
 }
 
 /* 1017s.pdf figure 5-2 */
@@ -502,6 +512,13 @@ void l2_encoder_impl::decode_sig(std::vector<unsigned char>& pdu_bytes)
             }
             offset += length - 1;
         }
+    }
+}
+
+void l2_encoder_impl::handle_clock(pmt::pmt_t msg)
+{
+    if (num_progs == 0) {
+        frames_allowed++;
     }
 }
 

@@ -87,6 +87,7 @@ private:
     std::map<int, std::queue<unsigned char>> aas_queues;
     int aas_current_port;
     int aas_block_offset;
+    int frames_allowed;
 
     unsigned char* out_buf;
 
@@ -112,6 +113,7 @@ private:
     int len_locators(int nop);
     void handle_aas_pdu(pmt::pmt_t msg);
     void decode_sig(std::vector<unsigned char>& pdu_bytes);
+    void handle_clock(pmt::pmt_t msg);
 
 public:
     l2_encoder_impl(const int num_progs,
