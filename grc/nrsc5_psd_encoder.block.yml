@@ -26,7 +26,7 @@ parameters:
 inputs:
 -   domain: message
     id: clock
-    optional: true
+    optional: ${bytes_per_frame == 0}
 -   domain: message
     id: set_meta
     optional: true
