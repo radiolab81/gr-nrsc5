@@ -88,7 +88,9 @@ int psd_encoder_impl::work(int noutput_items,
         out[off] = packet[packet_off++];
     }
 
-    bytes_allowed -= noutput_items_reduced;
+    if (bytes_per_frame > 0) {
+        bytes_allowed -= noutput_items_reduced;
+    }
     return noutput_items_reduced;
 }
 
