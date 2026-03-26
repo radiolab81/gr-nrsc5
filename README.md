@@ -115,6 +115,8 @@ The "Data bytes" setting controls how many bytes of each layer 2 PDU are set asi
 
 The Layer 2 encoder gets program type information from the SIS & SIG encoder via the "aas" message port, so this port should be connected even when "Data bytes" is set to zero.
 
+When sending data only (i.e. 0 audio programs), connect the "clock" output of the Layer 1 encoder to the "clock" input of the Layer 2 encoder to control latency.
+
 ### Layer 1 FM encoder
 
 This block implements Layer 1 FM (as defined in https://www.nrscstandards.org/standards-and-guidelines/documents/standards/nrsc-5-d/reference-docs/1011s.pdf). It takes PIDS and Layer 2 PDUs as input, and produces OFDM symbols as output. Only the Hybrid and Extended Hybrid modes have been implemented and tested so far. The All Digital modes are currently under development.
